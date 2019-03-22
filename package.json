@@ -1,0 +1,11 @@
+{
+  "name": "bumblebee-hotword",
+  "version": "0.0.1",
+  "description": "A minimalist hotword / wake word for the web, based on Porcupine",
+  "main": "lib/bumblebee.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jaxcore",
+  "license": "Apache-2.0"
+}
