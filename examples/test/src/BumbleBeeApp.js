@@ -1,6 +1,11 @@
 import React, {Component} from 'react';
 
-import bumblebee from 'bumblebee-hotword';
+import BumbleBee from 'bumblebee-hotword';
+
+const bumblebee = new BumbleBee({
+	hotword: null, // allow all hotwords
+	sensitivity: 0.1
+});
 
 class BumbleBeeApp extends Component {
 	constructor() {
@@ -8,21 +13,34 @@ class BumbleBeeApp extends Component {
 		
 		this.state = {
 			hotwords: ['bumblebee',
-				'porcupine',
-				'dragonfly',
 				'caterpillar',
-				'grasshopper',
-				'terminator',
 				'christina',
-				'francesca'],
+				'dragonfly',
+				'francesca',
+				'grasshopper',
+				'porcupine',
+				'terminator'],
 			bumblebee_started: false,
 			spokenHotwords: [],
-			selectedHotword: 'bumblebee',
+			selectedHotword: null,
 			sensivitiyChanged: false,
-			sensitivity: 0.5
+			sensitivity: 0.1
 		};
 		
-		this.sound = new Audio('transform.wav');
+		this.sounds = {
+			bumblebee: new Audio('sounds/bumblebee.mp3'),
+			caterpillar: new Audio('sounds/caterpillar.mp3'),
+			christina: new Audio('sounds/christina.mp3'),
+			dragonfly: new Audio('sounds/dragonfly.mp3'),
+			francesca: new Audio('sounds/francesca.mp3'),
+			grasshopper: new Audio('sounds/grasshopper.mp3'),
+			porcupine: new Audio('sounds/porcupine.mp3'),
+			terminator: new Audio('sounds/terminator.mp3')
+		};
+		
+		bumblebee.on('hotword', (word) => {
+			this.recognizeHotword(word);
+		});
 	}
 	
 	componentDidMount() {
@@ -33,13 +51,13 @@ class BumbleBeeApp extends Component {
 		return (
 			<div className="App">
 				
-				Hotword: <select value={this.state.selectedHotword} onChange={e => this.changeHotword(e)}>
+				Hotword: <select value={this.state.selectedHotword||''} onChange={e => this.changeHotword(e)}>
 					{ this.renderHotwordOptions() }
 				</select>
 				
 				<br/>
 				
-				Sensitivity: <select value={this.state.sensitivity} onChange={e => this.changeSensitivity(e)}>
+				Sensitivity: <select value={this.state.sensitivity||''} onChange={e => this.changeSensitivity(e)}>
 					{ this.renderSensitivities() }
 				</select>
 				
@@ -91,7 +109,7 @@ class BumbleBeeApp extends Component {
 			this.setState({
 				sensitivity
 			});
-			bumblebee.sensitivity(sensitivity);
+			bumblebee.setSensitivity(sensitivity);
 		}
 	}
 	
@@ -115,9 +133,8 @@ class BumbleBeeApp extends Component {
 				sensivitiyChanged: true
 			});
 			
-			bumblebee.start((word) => {
-				this.recognizeHotword(word);
-			});
+			bumblebee.start();
+			
 		}
 		else {
 			bumblebee.stop();
@@ -131,7 +148,7 @@ class BumbleBeeApp extends Component {
 	
 	recognizeHotword(word) {
 		if (word === this.state.selectedHotword || !this.state.selectedHotword) {
-			this.sound.play();
+			this.sounds[word].play();
 			
 			const spokenHotwords = this.state.spokenHotwords;
 			spokenHotwords.push(word);

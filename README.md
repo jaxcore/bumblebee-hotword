@@ -7,9 +7,20 @@ A heavily stripped down, JavaScript-only version of the excellent [Porcupine](ht
 When BumbleBee is added to a web page, it listens to the microphone and calls a function when it hears the word "bumblebee":
 
 ```
-bumblebee.start(function() {
+const BumbleBee = require('bumblebee-hotword');
+
+let bumblebee = new BumbleBee();
+
+bumblebee.setHotword('bumblebee');
+
+bumblebee.setSensitivity(0.1);
+
+bumblebee.on('hotword', function(hotword) {
 	// YOUR CODE HERE
+	console.log('hotword detected:', hotword);
 });
+
+bumblebee.start();
 ```
 
 ### Demo
@@ -22,13 +33,13 @@ bumblebee.start(function() {
 The hotwords available by default are:
 
 * bumblebee
-* porcupine
-* dragonfly
 * caterpillar
-* grasshopper
-* terminator
 * christina
+* dragonfly
 * francesca
+* grasshopper
+* porcupine
+* terminator
 
 The hotword can be changed at any time:
 
@@ -41,22 +52,32 @@ To have all of the hotwords available at the same time set the hotword to `null`
 ```
 bumblebee.setHotword(null);
 
-bumblebee.start(function(hotword) {
-	console.log('hotword:', hotword);
+bumblebee.on('hotword', function(hotword) {
+	console.log('hotword detected:', hotword);
 });
+
+bumblebee.start();
 ```
 
-These [open source hotwords](https://github.com/Picovoice/Porcupine/tree/master/resources/keyword_files) are freely usable under the Apache 2.0 license.  Custom hotwords can be licensed from [https://picovoice.ai](https://picovoice.ai/).
+Note: Depending on the hotword & sensitivity settings these hotwords will sometimes give false positives. However bumblebee, christina, francesca, and grasshopper tend to have the fewest false positives.
 
+These [open source hotwords](https://github.com/Picovoice/Porcupine/tree/master/resources/keyword_files) are freely usable under the Apache 2.0 license.  Custom hotwords can be licensed from [https://picovoice.ai](https://picovoice.ai/).
 
 ### Sensitivity
 
 Hotword detection sensitivity (0.0 to 1.0) is configurable only before the first call to `bumblebee.start()`
 
 ```
-bumblebee.sensitivity(0.8);
+bumblebee.setSensitivity(0.8);
 ```
 
+### Disable BumbleBee
+
+Use the stop() method:
+
+```
+bumblebee.stop();
+```
 
 ## Install
 
@@ -69,23 +90,32 @@ npm install bumblebee-hotword
 And include in your web project:
 
 ```
-import bumblebee from "bumblebee-hotword";
+import BumbleBee from "bumblebee-hotword";
 ```
 
 #### Porcupine Web Assembly Codebase
 
 Until a more elegant webpack-based solution can be found, the [pv_porcupine.wasm](lib/pv_porcupine.wasm) file must be manually served relatively from the same directory as the html.  See [example/test/public](https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/test/public)
 
-## Run Demo Locally
+### Run Demo Locally
 
 Clone this repo, then:
 
 ```
 cd examples/test
-yarn install
-yarn run
+npm install
+npm run
 ```
 
 ### License
 
 This repository is licensed under Apache 2.0.  See [Porcupine](https://github.com/Picovoice/Porcupine) for more details.
+
+### Change Log
+
+**0.0.2:**
+
+- use ES6 syntax
+- converted to EventEmitter, emits "hotword" event
+- changed .sensitivity() to .setSensitivity()
+- added additional sounds to the example
