@@ -50,7 +50,7 @@ The hotword can be changed at any time:
 bumblebee.setHotword('dragonfly');
 ```
 
-To have all of the hotwords available at the same time set the hotword to `null` and receive the hotword in the `.start()` callback:
+To have all of the hotwords available at the same time set the hotword to `null` and receive the hotword in the `.on('hotword')` event:
 
 ```
 bumblebee.setHotword(null);
