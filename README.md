@@ -23,10 +23,13 @@ bumblebee.on('hotword', function(hotword) {
 bumblebee.start();
 ```
 
+Note: browsers require user-interaction to start the microphone.
+
 ### Demo
 
-[https://jaxcore.github.io/bumblebee-hotword/](https://jaxcore.github.io/bumblebee-hotword/)
+Basic Example: [https://jaxcore.github.io/bumblebee-hotword/basic-example/](https://jaxcore.github.io/bumblebee-hotword/basic-example/)
 
+Full Example: [https://jaxcore.github.io/bumblebee-hotword/full-example/](https://jaxcore.github.io/bumblebee-hotword/full-example/)
 
 ### Hotwords
 
@@ -95,7 +98,7 @@ import BumbleBee from "bumblebee-hotword";
 
 #### Porcupine Web Assembly Codebase
 
-Until a more elegant webpack-based solution can be found, the [pv_porcupine.wasm](lib/pv_porcupine.wasm) file must be manually served relatively from the same directory as the html.  See [example/test/public](https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/test/public)
+Until a more elegant webpack-based solution can be found, the [pv_porcupine.wasm](lib/pv_porcupine.wasm) file must be manually served relatively from the same directory as the html.  See [example/full-example/public](https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/full-example/public)
 
 ### Run Demo Locally
 
@@ -118,4 +121,6 @@ This repository is licensed under Apache 2.0.  See [Porcupine](https://github.co
 - use ES6 syntax
 - converted to EventEmitter, emits "hotword" event
 - changed .sensitivity() to .setSensitivity()
-- added additional sounds to the example
+- created a simple "basic" example
+- added Text-to-Speech (jaxcore-say) to the full-example
+- added additional sounds to the full-example

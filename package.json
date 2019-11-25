@@ -5,8 +5,11 @@
   "main": "lib/bumblebee.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-docs": "cd examples/test && npm run build && cd ../..",
-    "copy-docs": "rm -rf docs && mv examples/test/build docs"
+    "build-basic": "cd examples/basic-example && npm run build && cd ../..",
+    "build-full": "cd examples/full-example && npm run build && cd ../..",
+    "copy-basic": "rm -rf docs/basic-example && mv examples/basic-example/build/ docs/basic-example",
+    "copy-full": "rm -rf docs/full-example && mv examples/full-example/build/ docs/full-example",
+    "build-all": "npm run build-basic && npm run build-full && npm run copy-basic && npm run copy-full"
   },
   "author": "Jaxcore",
   "license": "Apache-2.0"
