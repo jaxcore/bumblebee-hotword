@@ -1,15 +1,22 @@
 import React, {Component} from 'react';
 import Say from 'jaxcore-say';
+
 import BumbleBee from 'bumblebee-hotword';
 
-const bumblebee = new BumbleBee({
-	hotword: null, // allow all hotwords
-	sensitivity: 0.1
-});
+const bumblebee = new BumbleBee();
+
+bumblebee.setWorkersPath('/bumblebee-workers');
+
+bumblebee.addHotword('bumblebee', require('bumblebee-hotword/hotwords/bumblebee'));
+bumblebee.addHotword('grasshopper', require('bumblebee-hotword/hotwords/grasshopper'));
+bumblebee.addHotword('hey_edison', require('bumblebee-hotword/hotwords/hey_edison'));
+bumblebee.addHotword('porcupine', require('bumblebee-hotword/hotwords/porcupine'));
+bumblebee.addHotword('terminator', require('bumblebee-hotword/hotwords/terminator'));
+
+bumblebee.setHotword('bumblebee');
 
 Say.setWorkers({
-	'espeak': 'webworkers/espeak-en-worker.js',
-	'sam': 'webworkers/sam-worker.js'
+	'espeak': 'webworkers/espeak-en-worker.js'
 });
 
 var voice = new Say({
@@ -22,20 +29,12 @@ class BumbleBeeApp extends Component {
 		super();
 		
 		this.state = {
-			hotwords: Object.keys(BumbleBee.hotwords),
-			// hotwords: ['bumblebee',
-			// 	'caterpillar',
-			// 	'christina',
-			// 	'dragonfly',
-			// 	'francesca',
-			// 	'grasshopper',
-			// 	'porcupine',
-			// 	'terminator'],
+			hotwords: Object.keys(bumblebee.hotwords),
 			bumblebee_started: false,
 			spokenHotwords: [],
 			selectedHotword: null,
 			sensivitiyChanged: false,
-			sensitivity: 0.1,
+			sensitivity: 0.5,
 			// action: 'sounds'
 			action: 'texttospeech'
 		};
@@ -54,6 +53,11 @@ class BumbleBeeApp extends Component {
 		bumblebee.on('hotword', (word) => {
 			this.recognizeHotword(word);
 		});
+		
+		// downsampled microphone audio data now available:
+		// bumblebee.on('data', function(data) {
+		// 	console.log('audio data:', data);
+		// });
 	}
 	
 	componentDidMount() {

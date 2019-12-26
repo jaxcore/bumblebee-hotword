@@ -1,12 +1,12 @@
 {
   "name": "bumblebee-full-example",
-  "version": "0.0.21",
+  "version": "0.0.3",
   "dependencies": {
-    "bumblebee-hotword": "0.0.2",
-    "jaxcore-say": "0.0.1",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
-    "react-scripts": "^3.2.0"
+    "bumblebee-hotword": "0.0.3",
+    "jaxcore-say": "0.0.4",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

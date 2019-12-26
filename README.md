@@ -2,18 +2,27 @@
 
 ![screenshot](https://raw.githubusercontent.com/jaxcore/bumblebee-hotword/master/logo.png)
 
-A heavily stripped down, JavaScript-only version of the excellent [Porcupine](https://github.com/Picovoice/Porcupine) wake word (hotword) system. This requires no cloud services and is freely available to use under the Apache 2.0 license (GPLv3 compatible).
+This is a stripped down and repackaged version of the excellent [Porcupine](https://github.com/Picovoice/Porcupine) wake word (hotword) system. This requires no cloud services and is freely available to use under the Apache 2.0 license (GPLv3 compatible).
 
-When BumbleBee is added to a web page, it listens to the microphone and calls a function when it hears the word "bumblebee":
+When BumbleBee is added to a web page, it listens to the microphone and calls a function when it hears the available hotwords:
 
 ```
 const BumbleBee = require('bumblebee-hotword');
 
 let bumblebee = new BumbleBee();
 
-bumblebee.setHotword('bumblebee');
+// set path to worker files
+bumblebee.setWorkersPath('/bumblebee-workers');
 
-bumblebee.setSensitivity(0.1);
+// add hotword files
+bumblebee.addHotword('bumblebee', require('bumblebee-hotword/hotwords/bumblebee'));
+bumblebee.addHotword('grasshopper', require('bumblebee-hotword/hotwords/grasshopper'));
+bumblebee.addHotword('hey_edison', require('bumblebee-hotword/hotwords/hey_edison'));
+bumblebee.addHotword('porcupine', require('bumblebee-hotword/hotwords/porcupine'));
+bumblebee.addHotword('terminator', require('bumblebee-hotword/hotwords/terminator'));
+
+// set sensitivity from 0.0 to 1.0
+bumblebee.setSensitivity(0.5);
 
 bumblebee.on('hotword', function(hotword) {
 	// YOUR CODE HERE
@@ -36,19 +45,10 @@ Full Example: [https://jaxcore.github.io/bumblebee-hotword/full-example/](https:
 The hotwords available by default are:
 
 * bumblebee
-* caterpillar
-* christina
-* dragonfly
-* francesca
 * grasshopper
+* hey edison
 * porcupine
 * terminator
-
-The hotword can be changed at any time:
-
-```
-bumblebee.setHotword('dragonfly');
-```
 
 To have all of the hotwords available at the same time set the hotword to `null` and receive the hotword in the `.on('hotword')` event:
 
@@ -62,9 +62,13 @@ bumblebee.on('hotword', function(hotword) {
 bumblebee.start();
 ```
 
-Note: Depending on the hotword & sensitivity settings these hotwords will sometimes give false positives. However bumblebee, christina, francesca, and grasshopper tend to have the fewest false positives.
+Or to restrict bumblebee to a specific hotword:
 
-These [open source hotwords](https://github.com/Picovoice/Porcupine/tree/master/resources/keyword_files) are freely usable under the Apache 2.0 license.  Custom hotwords can be licensed from [https://picovoice.ai](https://picovoice.ai/).
+```
+bumblebee.setHotword('terminator');
+```
+
+The [Picovoice hotwords open source hotwords](https://github.com/Picovoice/Porcupine/tree/master/resources/keyword_files) are freely usable under the Apache 2.0 license.  Custom hotwords can be licensed from [https://picovoice.ai](https://picovoice.ai/).
 
 ### Sensitivity
 
@@ -76,7 +80,7 @@ bumblebee.setSensitivity(0.8);
 
 ### Disable BumbleBee
 
-Use the stop() method:
+Use the stop() method to disable the microphone and all processing:
 
 ```
 bumblebee.stop();
@@ -98,7 +102,14 @@ import BumbleBee from "bumblebee-hotword";
 
 #### Porcupine Web Assembly Codebase
 
-Until a more elegant webpack-based solution can be found, the [pv_porcupine.wasm](lib/pv_porcupine.wasm) file must be manually served relatively from the same directory as the html.  See [example/full-example/public](https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/full-example/public)
+The porcupine webworker files must be manually served from your public html directory and the directory must be specific using `setWorkersPath()` before starting bumblebee.  See the examples for an example.
+
+```
+bumblebee.setWorkersPath('/bumblebee-workers');
+```
+
+The `bumblebee-workers` directory can be found [here](https://jaxcore.github.io/bumblebee-hotword/bumblebee-workers/)
+
 
 ### Run Demo Locally
 
@@ -115,6 +126,13 @@ npm run
 This repository is licensed under Apache 2.0.  See [Porcupine](https://github.com/Picovoice/Porcupine) for more details.
 
 ### Change Log
+
+**0.0.3:**
+
+- upgrade to Porcupine Manager 1.3.0
+- list of Porcupine hotwords has been reduced but accuracy has increased
+- addHotword() syntax and worker files has changed
+- bumblebee.on('data') emits downsampled 16khz audio data
 
 **0.0.2:**
 
