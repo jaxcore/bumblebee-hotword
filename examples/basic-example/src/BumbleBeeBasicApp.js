@@ -6,7 +6,7 @@ const bumblebee = new BumbleBee();
 
 bumblebee.setSensitivity(0.5);
 
-bumblebee.setWorkersPath('/bumblebee-workers');
+bumblebee.setWorkersPath('./bumblebee-workers');
 
 bumblebee.addHotword('bumblebee', require('bumblebee-hotword/hotwords/bumblebee'));
 

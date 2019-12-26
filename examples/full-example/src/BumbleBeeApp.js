@@ -5,7 +5,7 @@ import BumbleBee from 'bumblebee-hotword';
 
 const bumblebee = new BumbleBee();
 
-bumblebee.setWorkersPath('/bumblebee-workers');
+bumblebee.setWorkersPath('./bumblebee-workers');
 
 bumblebee.addHotword('bumblebee', require('bumblebee-hotword/hotwords/bumblebee'));
 bumblebee.addHotword('grasshopper', require('bumblebee-hotword/hotwords/grasshopper'));
