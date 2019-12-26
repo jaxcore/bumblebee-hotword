@@ -22,14 +22,15 @@ class BumbleBeeApp extends Component {
 		super();
 		
 		this.state = {
-			hotwords: ['bumblebee',
-				'caterpillar',
-				'christina',
-				'dragonfly',
-				'francesca',
-				'grasshopper',
-				'porcupine',
-				'terminator'],
+			hotwords: Object.keys(BumbleBee.hotwords),
+			// hotwords: ['bumblebee',
+			// 	'caterpillar',
+			// 	'christina',
+			// 	'dragonfly',
+			// 	'francesca',
+			// 	'grasshopper',
+			// 	'porcupine',
+			// 	'terminator'],
 			bumblebee_started: false,
 			spokenHotwords: [],
 			selectedHotword: null,
