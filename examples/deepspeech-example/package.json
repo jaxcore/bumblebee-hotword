@@ -1,8 +1,8 @@
 {
-  "name": "bumblebee-basic-example",
-  "version": "0.0.3",
+  "name": "bumblebee-deepspeech-example",
+  "version": "0.0.4",
   "dependencies": {
-    "bumblebee-hotword": "0.0.3",
+    "bumblebee-hotword": "0.0.4",
     "deepspeech": "^0.6.0",
     "jaxcore-say": "^0.0.4",
     "node-vad": "^1.1.4",

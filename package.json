@@ -1,6 +1,6 @@
 {
   "name": "bumblebee-hotword",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A minimalist hotword / wake word for the web, based on Porcupine",
   "main": "lib/bumblebee.js",
   "scripts": {

@@ -1,8 +1,8 @@
 {
   "name": "bumblebee-basic-example",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "dependencies": {
-    "bumblebee-hotword": "0.0.3",
+    "bumblebee-hotword": "0.0.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0"
