@@ -1,11 +1,17 @@
 {
-  "name": "bumblebee-full-example",
-  "version": "0.0.4",
+  "name": "bumblebee-basic-example",
+  "version": "0.0.3",
   "dependencies": {
-    "jaxcore-say": "0.0.4",
+    "bumblebee-hotword": "0.0.3",
+    "deepspeech": "^0.6.0",
+    "jaxcore-say": "^0.0.4",
+    "node-vad": "^1.1.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0"
+    "react-scripts": "3.3.0",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
+    "words-to-numbers": "^1.5.1"
   },
   "scripts": {
     "start": "react-scripts start",

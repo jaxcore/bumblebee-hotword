@@ -35,16 +35,13 @@ class BumbleBeeApp extends Component {
 			selectedHotword: null,
 			sensivitiyChanged: false,
 			sensitivity: 0.5,
-			// action: 'sounds'
-			action: 'texttospeech'
+			action: 'sounds'
+			// action: 'texttospeech'
 		};
 		
 		this.sounds = {
-			bumblebee: new Audio('sounds/bumblebee.mp3'),
-			caterpillar: new Audio('sounds/caterpillar.mp3'),
-			christina: new Audio('sounds/christina.mp3'),
-			dragonfly: new Audio('sounds/dragonfly.mp3'),
-			francesca: new Audio('sounds/francesca.mp3'),
+			bumblebee: new Audio('sounds/bumblebee-on.mp3'),
+			hey_edison: new Audio('sounds/hey_edison.mp3'),
 			grasshopper: new Audio('sounds/grasshopper.mp3'),
 			porcupine: new Audio('sounds/porcupine.mp3'),
 			terminator: new Audio('sounds/terminator.mp3')

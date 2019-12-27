@@ -4,7 +4,47 @@
 
 This is a stripped down and repackaged version of the excellent [Porcupine](https://github.com/Picovoice/Porcupine) wake word (hotword) system. This requires no cloud services and is freely available to use under the Apache 2.0 license (GPLv3 compatible).
 
-When BumbleBee is added to a web page, it listens to the microphone and calls a function when it hears the available hotwords:
+When BumbleBee is added to a web page, it listens to the microphone and calls a function when it hears the available hotwords.
+
+## Examples
+
+Basic Example: [https://jaxcore.github.io/bumblebee-hotword/basic-example/](https://jaxcore.github.io/bumblebee-hotword/basic-example/)
+
+Full Example: [https://jaxcore.github.io/bumblebee-hotword/full-example/](https://jaxcore.github.io/bumblebee-hotword/full-example/)
+
+#### DeepSpeech Example:
+
+Use Bumblebee as a hotword/keyword system for Mozilla DeepSpeech.  This example must be installed and run offline.
+
+- [https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/deepspeech-example](https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/deepspeech-example)
+
+
+## Install
+
+Using npm:
+
+```
+npm install bumblebee-hotword
+```
+
+And include in your web project:
+
+```
+import BumbleBee from "bumblebee-hotword";
+```
+
+#### Porcupine Web Assembly Codebase
+
+The porcupine webworker files must be manually served from your public html directory and the directory must be specific using `setWorkersPath()` before starting bumblebee.  See the examples for an example.
+
+```
+bumblebee.setWorkersPath('/bumblebee-workers');
+```
+
+The `bumblebee-workers` directory can be found [here](https://jaxcore.github.io/bumblebee-hotword/bumblebee-workers/)
+
+
+### Quick Start
 
 ```
 const BumbleBee = require('bumblebee-hotword');
@@ -33,12 +73,6 @@ bumblebee.start();
 ```
 
 Note: browsers require user-interaction to start the microphone.
-
-### Demo
-
-Basic Example: [https://jaxcore.github.io/bumblebee-hotword/basic-example/](https://jaxcore.github.io/bumblebee-hotword/basic-example/)
-
-Full Example: [https://jaxcore.github.io/bumblebee-hotword/full-example/](https://jaxcore.github.io/bumblebee-hotword/full-example/)
 
 ### Hotwords
 
@@ -86,46 +120,71 @@ Use the stop() method to disable the microphone and all processing:
 bumblebee.stop();
 ```
 
-## Install
-
-Using npm:
+### Mute and Volume
 
 ```
-npm install bumblebee-hotword
+bumblebee.setMuted(true); // mutes microphone volume
+
+bumblebee.setMicVolume(0.5); // sets microphone volume to 50%
 ```
 
-And include in your web project:
+### Spectrum Analyzer
+
+Bumblebee instantiates an [audio analyser](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser) which can be used to draw an oscilloscope or other types of processing:
 
 ```
-import BumbleBee from "bumblebee-hotword";
+bumblebee.on('analyser', function(analyser) {
+	// analyser is an instance of audioContext.createAnalyser()
+});
 ```
 
-#### Porcupine Web Assembly Codebase
+### Audio Data
 
-The porcupine webworker files must be manually served from your public html directory and the directory must be specific using `setWorkersPath()` before starting bumblebee.  See the examples for an example.
-
-```
-bumblebee.setWorkersPath('/bumblebee-workers');
-```
-
-The `bumblebee-workers` directory can be found [here](https://jaxcore.github.io/bumblebee-hotword/bumblebee-workers/)
-
-
-### Run Demo Locally
-
-Clone this repo, then:
+Bumblebee emits a stream of "data" events which can be used to receive the microphone audio data after downsampling to 16bit/16khz PCM.  This is the format also used by other speech processing systems such as DeepSpeech.
 
 ```
-cd examples/test
-npm install
-npm run
+bumblebee.on('data', function(data) {
+	console.log('data', data);
+});
 ```
 
-### License
+
+## Run Examples Locally
+
+Clone this repo, then...
+
+For the [basic](https://jaxcore.github.io/bumblebee-hotword/basic-example/) example:
+
+```
+cd examples/basic-example
+yarn install
+yarn run
+```
+
+For the [full](https://jaxcore.github.io/bumblebee-hotword/full-example/) example:
+
+```
+cd examples/full-example
+yarn install
+yarn run
+```
+
+For the DeepSpeech speech recognition and hotword example, see instructions:
+
+- [https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/deepspeech-example](https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/deepspeech-example)
+
+
+## License
 
 This repository is licensed under Apache 2.0.  See [Porcupine](https://github.com/Picovoice/Porcupine) for more details.
 
-### Change Log
+## Change Log
+
+**0.0.4:**
+
+- added spectrum analyser
+- setMuted() and setMicVolume() methods
+- DeepSpeech example
 
 **0.0.3:**
 

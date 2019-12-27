@@ -21,7 +21,7 @@ class BumbleBeeBasicApp extends Component {
 			started: false
 		};
 		
-		const sound = new Audio('sounds/bumblebee.mp3');
+		const sound = new Audio('sounds/bumblebee-on.mp3');
 		
 		bumblebee.on('hotword', (hotword) => {
 			sound.play();
