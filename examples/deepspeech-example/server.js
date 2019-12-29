@@ -11,8 +11,8 @@ const SERVER_PORT = 4000; // websocket server port
 
 // const VAD_MODE = VAD.Mode.NORMAL;
 // const VAD_MODE = VAD.Mode.LOW_BITRATE;
-const VAD_MODE = VAD.Mode.AGGRESSIVE;
-// const VAD_MODE = VAD.Mode.VERY_AGGRESSIVE;
+// const VAD_MODE = VAD.Mode.AGGRESSIVE;
+const VAD_MODE = VAD.Mode.VERY_AGGRESSIVE;
 const vad = new VAD(VAD_MODE);
 
 function createModel(modelDir, options) {
@@ -34,8 +34,9 @@ let modelStream;
 let recordedChunks = 0;
 let silenceStart = null;
 let recordedAudioLength = 0;
-
 let endTimeout = null;
+let silenceBuffers = [];
+
 function processMicrophone(data, callback) {
 	vad.processAudio(data, 16000).then((res) => {
 		switch (res) {
@@ -57,19 +58,14 @@ function processMicrophone(data, callback) {
 	// timeout after 1s of inactivity
 	clearTimeout(endTimeout);
 	endTimeout = setTimeout(function() {
-		timeoutMicrophone(callback);
+		resetMicrophone();
 	},1000);
 }
 
-function timeoutMicrophone(callback) {
-	process.stdout.write('[timeout]');
-	
-	let results = intermediateDecode();
-	if (results) {
-		if (callback) {
-			callback(results);
-		}
-	}
+function resetMicrophone() {
+	clearTimeout(endTimeout);
+	console.log('[reset]');
+	intermediateDecode(); // ignore results
 	recordedChunks = 0;
 	silenceStart = null;
 }
@@ -99,7 +95,32 @@ function processSilence(data, callback) {
 	}
 	else {
 		process.stdout.write('.'); // silence detected while not recording
+		bufferSilence(data);
 	}
+}
+
+function bufferSilence(data) {
+	// VAD has a tendency to cut the first bit of audio data from the start of a recording
+	// so keep a buffer of that first bit of audio and in addBufferedSilence() reattach it to the beginning of the recording
+	silenceBuffers.push(data);
+	if (silenceBuffers.length >= 3) {
+		silenceBuffers.shift();
+	}
+}
+
+function addBufferedSilence(data) {
+	let audioBuffer;
+	if (silenceBuffers.length) {
+		silenceBuffers.push(data);
+		let length = 0;
+		silenceBuffers.forEach(function (buf) {
+			length += buf.length;
+		});
+		audioBuffer = Buffer.concat(silenceBuffers, length);
+		silenceBuffers = [];
+	}
+	else audioBuffer = data;
+	return audioBuffer;
 }
 
 function processVoice(data) {
@@ -112,6 +133,8 @@ function processVoice(data) {
 		process.stdout.write('='); // still recording
 	}
 	recordedChunks++;
+	
+	data = addBufferedSilence(data);
 	feedAudioContent(data);
 }
 
@@ -122,22 +145,26 @@ function createStream() {
 }
 
 function finishStream() {
-	let start = new Date();
-	let text = englishModel.finishStream(modelStream).trim();
-	if (text) {
-		if (text === 'i' || text === 'a') {
-			// bug in DeepSpeech 0.6 causes silence to be inferred as "i" or "a"
-			return;
+	if (modelStream) {
+		let start = new Date();
+		let text = englishModel.finishStream(modelStream);
+		if (text) {
+			if (text === 'i' || text === 'a') {
+				// bug in DeepSpeech 0.6 causes silence to be inferred as "i" or "a"
+				return;
+			}
+			console.log('');
+			console.log('Recognized Text:', text);
+			let recogTime = new Date().getTime() - start.getTime();
+			return {
+				text,
+				recogTime,
+				audioLength: Math.round(recordedAudioLength)
+			};
 		}
-		console.log('');
-		console.log('Recognized Text:', text);
-		let recogTime = new Date().getTime() - start.getTime();
-		return {
-			text,
-			recogTime,
-			audioLength: Math.round(recordedAudioLength)
-		};
 	}
+	silenceBuffers = [];
+	modelStream = null;
 }
 
 function intermediateDecode() {
@@ -147,7 +174,7 @@ function intermediateDecode() {
 }
 
 function feedAudioContent(chunk) {
-	recordedAudioLength += (chunk.length / 2) * ( 1 / 16000) * 1000;
+	recordedAudioLength += (chunk.length / 2) * (1 / 16000) * 1000;
 	englishModel.feedAudioContent(modelStream, chunk.slice(0, chunk.length / 2));
 }
 
@@ -167,18 +194,16 @@ io.on('connection', function(socket) {
 		console.log('client disconnected');
 	});
 	
-	socket.on('client-ready', function(data) {
-		console.log('client-ready', data);
-		socket.emit('server-ready');
-	});
-	
 	createStream();
 	
 	socket.on('microphone-data', function(data) {
-		// console.log('data', data);
 		processMicrophone(data, (results) => {
 			socket.emit('recognize', results);
 		});
+	});
+	
+	socket.on('microphone-reset', function() {
+		resetMicrophone();
 	});
 });
 

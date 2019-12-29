@@ -46,18 +46,19 @@ class BumbleBeeDeepSpeechApp extends Component {
 		this.recognitionCount = 0;
 		
 		this.socket = io.connect('http://localhost:4000', {});
-		this.socket.once('connect', () => {
+		this.socket.on('connect', () => {
 			console.log('socket connected');
-			
-			this.socket.on('server-ready', () => {
-				console.log('server-ready');
-			});
-			
-			this.socket.on('recognize', (results) => {
-				this.processSpeechRecognition(results);
-			});
-			
-			this.socket.emit('client-ready');
+			this.setState({connected: true});
+		});
+		
+		this.socket.on('disconnect', () => {
+			console.log('socket disconnected');
+			this.setState({connected: false});
+			this.stop();
+		});
+		
+		this.socket.on('recognize', (results) => {
+			this.processSpeechRecognition(results);
 		});
 		
 		bumblebee.on('hotword', (hotword) => {
@@ -73,12 +74,13 @@ class BumbleBeeDeepSpeechApp extends Component {
 				this.recognitionOn();
 			}
 			
-			// todo: SEND WEBSOCKET microphone-reset to stop "bumble bee" from being returned by Deepspeech
+			console.log('hotword sending reset');
+			this.socket.emit('microphone-reset', 'hotword');
 		});
 		
 		
 		bumblebee.on('data', (data) => {
-			if (this.state.recognitionOn) {
+			if (this.state.connected && this.state.recognitionOn) {
 				this.socket.emit('microphone-data', data.buffer);
 			}
 		});
@@ -92,7 +94,6 @@ class BumbleBeeDeepSpeechApp extends Component {
 				this.analyser.setMuted(true);
 			}
 			this.analyser.start();
-			//analyse(analyser);
 		});
 	}
 	
@@ -118,6 +119,7 @@ class BumbleBeeDeepSpeechApp extends Component {
 				this.setState({
 					unrecognizedText: results.text
 				});
+				this.startMenuTimer();
 			}
 		}
 		else if (this.state.mode === 'dictation') {
@@ -202,21 +204,24 @@ class BumbleBeeDeepSpeechApp extends Component {
 			unrecognizedText: null
 		}, () => {
 			if (mode === 'menu') {
+				this.startMenuTimer();
+			}
+		});
+	}
+	startMenuTimer() {
+		clearInterval(this.timeoutInterval);
+		this.setState({
+			menuStartTime: new Date().getTime(),
+			menuRemainingTime: 10000
+		});
+		this.timeoutInterval = setInterval(() => {
+			let menuRemainingTime = 10000 - (new Date().getTime() - this.state.menuStartTime);
+			if (menuRemainingTime <= 0) {
+				this.menuQuit();
+			}
+			else {
 				this.setState({
-					unrecognizedText: null,
-					menuStartTime: new Date().getTime(),
-					menuRemainingTime: 0
-				});
-				this.timeoutInterval = setInterval(() => {
-					let menuRemainingTime = 10000 - (new Date().getTime() - this.state.menuStartTime);
-					if (menuRemainingTime <= 0) {
-						this.menuQuit();
-					}
-					else {
-						this.setState({
-							menuRemainingTime
-						});
-					}
+					menuRemainingTime
 				});
 			}
 		});
@@ -262,18 +267,19 @@ class BumbleBeeDeepSpeechApp extends Component {
 			recognitionOutput: [],
 			unrecognizedText: null
 		});
+		this.socket.emit('microphone-reset', 'stop');
 		bumblebee.stop();
-		this.analyser.stop();
+		if (this.analyser) this.analyser.stop();
 	}
 	
 	render() {
 		return (
 			<div className="App">
-				<button disabled={this.state.started} onClick={e => {
+				<button disabled={!this.state.connected || this.state.started} onClick={e => {
 					this.start()
 				}}>Start
 				</button>
-				<button disabled={!this.state.started} onClick={e => {
+				<button disabled={!this.state.connected || !this.state.started} onClick={e => {
 					this.stop()
 				}}>Stop
 				</button>
@@ -283,7 +289,7 @@ class BumbleBeeDeepSpeechApp extends Component {
 				{' '}
 				<strong>Recognition: {this.state.recognitionOn ? 'ON' : 'OFF'}</strong>
 				<br/>
-				<canvas id="oscilloscope" width="800" height="100" style={{backgroundColor: 'black'}}/>
+				<canvas id="oscilloscope" width="800" height="100" />
 				<br/>
 				{this.renderMainInfo()}
 				{this.renderMenu()}
