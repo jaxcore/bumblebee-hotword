@@ -169,10 +169,9 @@ yarn install
 yarn run
 ```
 
-For the DeepSpeech speech recognition and hotword example, see instructions:
+For the DeepSpeech speech recognition and hotword example, see instructions at:
 
-- [https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/deepspeech-example](https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/deepspeech-example)
-
+- [https://github.com/jaxcore/deepspeech-plugin](https://github.com/jaxcore/deepspeech-plugin)
 
 ## License
 
