@@ -14,9 +14,9 @@ Full Example: [https://jaxcore.github.io/bumblebee-hotword/full-example/](https:
 
 #### DeepSpeech Example:
 
-Use Bumblebee as a hotword/keyword system for Mozilla DeepSpeech.  This example must be installed and run offline.
+Bumblebee can be used as a hotword/keyword system for [Mozilla DeepSpeech](https://github.com/dsteinman/DeepSpeech) speech recognition engine.  See the [Jaxcore DeepSpeech Plugin](https://github.com/jaxcore/deepspeech-plugin/) project for more information:
 
-- [https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/deepspeech-example](https://github.com/jaxcore/bumblebee-hotword/tree/master/examples/deepspeech-example)
+- [https://github.com/jaxcore/deepspeech-plugin/tree/master/examples/web-hotword-example](https://github.com/jaxcore/deepspeech-plugin/tree/master/examples/web-hotword-example)
 
 
 ## Install

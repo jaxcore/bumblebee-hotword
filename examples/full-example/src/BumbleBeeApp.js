@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Say from 'jaxcore-say';
 
-import BumbleBee from 'bumblebee-hotword';
+import BumbleBee, {SpectrumAnalyser} from 'bumblebee-hotword';
 
 const bumblebee = new BumbleBee();
 
@@ -35,7 +35,8 @@ class BumbleBeeApp extends Component {
 			selectedHotword: null,
 			sensivitiyChanged: false,
 			sensitivity: 0.5,
-			action: 'sounds'
+			action: 'sounds',
+			muted: false
 			// action: 'texttospeech'
 		};
 		
@@ -59,6 +60,17 @@ class BumbleBeeApp extends Component {
 	
 	componentDidMount() {
 		bumblebee.setHotword(this.state.selectedHotword);
+		
+		bumblebee.on('analyser', (analyser) => {
+			console.log('analyser', analyser);
+			var canvas = document.getElementById('oscilloscope');
+			this.analyser = new SpectrumAnalyser(analyser, canvas);
+			// if (this.state.muted) {
+			// 	bumblebee.setMuted(true);
+			// 	this.analyser.setMuted(true);
+			// }
+			this.analyser.start();
+		});
 	}
 	
 	render() {
@@ -85,8 +97,15 @@ class BumbleBeeApp extends Component {
 				<br/>
 				
 				<button onClick={e => this.toggleHotword()}>
-					{!this.state.bumblebee_started ? 'Start' : 'Stop'}
+					{this.state.bumblebee_started ? 'Stop' : 'Start'}
 				</button>
+				
+				<button onClick={e => this.toggleMuted()}>
+					{this.state.muted ? 'Unmute' : 'Mute'}
+				</button>
+				
+				<br/>
+				<canvas id="oscilloscope" width="800" height="100" />
 				
 				{this.renderSay()}
 				
@@ -172,6 +191,15 @@ class BumbleBeeApp extends Component {
 				spokenHotwords: []
 			});
 		}
+	}
+	
+	toggleMuted() {
+		const muted = !this.state.muted;
+		this.setState({
+			muted
+		}, () => {
+			bumblebee.setMuted(muted);
+		});
 	}
 	
 	recognizeHotword(hotword) {
