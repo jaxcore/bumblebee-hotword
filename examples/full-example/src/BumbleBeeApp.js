@@ -37,7 +37,6 @@ class BumbleBeeApp extends Component {
 			sensitivity: 0.5,
 			action: 'sounds',
 			muted: false
-			// action: 'texttospeech'
 		};
 		
 		this.sounds = {
@@ -127,8 +126,8 @@ class BumbleBeeApp extends Component {
 	renderSensitivities(e) {
 		let s = [];
 		for (let i=0;i<=10;i++) {
-			let n = i / 10; //Math.round(i / 10) / 10:
-			let p = i * 10; //Math.round(i / 10) / 10:
+			let n = i / 10;
+			let p = i * 10;
 			s.push(<option key={i} value={n}>{p}%</option>);
 		}
 		return s;
