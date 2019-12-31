@@ -41,7 +41,7 @@ The porcupine webworker files must be manually served from your public html dire
 bumblebee.setWorkersPath('/bumblebee-workers');
 ```
 
-The `bumblebee-workers` directory can be found [here](https://jaxcore.github.io/bumblebee-hotword/bumblebee-workers/)
+The `bumblebee-workers` directory can be found [here](https://github.com/jaxcore/bumblebee-hotword/tree/master/bumblebee-workers)
 
 
 ### Quick Start
