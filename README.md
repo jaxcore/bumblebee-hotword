@@ -54,12 +54,8 @@ let bumblebee = new BumbleBee();
 // set path to worker files
 bumblebee.setWorkersPath('/bumblebee-workers');
 
-// add hotword files
-bumblebee.addHotword('bumblebee', require('bumblebee-hotword/hotwords/bumblebee'));
-bumblebee.addHotword('grasshopper', require('bumblebee-hotword/hotwords/grasshopper'));
-bumblebee.addHotword('hey_edison', require('bumblebee-hotword/hotwords/hey_edison'));
-bumblebee.addHotword('porcupine', require('bumblebee-hotword/hotwords/porcupine'));
-bumblebee.addHotword('terminator', require('bumblebee-hotword/hotwords/terminator'));
+// add hotword
+bumblebee.addHotword('bumblebee');
 
 // set sensitivity from 0.0 to 1.0
 bumblebee.setSensitivity(0.5);
@@ -84,22 +80,18 @@ The hotwords available by default are:
 * porcupine
 * terminator
 
-To have all of the hotwords available at the same time set the hotword to `null` and receive the hotword in the `.on('hotword')` event:
+Due to processing time it is recommended to only add the hotwords that need to be used.  The hotword spoken can be retreived in the `.on('hotword')` event:
 
 ```
-bumblebee.setHotword(null);
+bumblebee.addHotword('bumblebee');
+bumblebee.addHotword('grasshopper');
+bumblebee.addHotword('hey_edison');
+bumblebee.addHotword('porcupine');
+bumblebee.addHotword('terminator');
 
 bumblebee.on('hotword', function(hotword) {
 	console.log('hotword detected:', hotword);
 });
-
-bumblebee.start();
-```
-
-Or to restrict bumblebee to a specific hotword:
-
-```
-bumblebee.setHotword('terminator');
 ```
 
 The [Picovoice hotwords open source hotwords](https://github.com/Picovoice/Porcupine/tree/master/resources/keyword_files) are freely usable under the Apache 2.0 license.  Custom hotwords can be licensed from [https://picovoice.ai](https://picovoice.ai/).
@@ -120,12 +112,20 @@ Use the stop() method to disable the microphone and all processing:
 bumblebee.stop();
 ```
 
-### Mute and Volume
+### Mute
 
 ```
 bumblebee.setMuted(true); // mutes microphone volume
+```
 
+### Set Microphone Volume
+
+```
 bumblebee.setMicVolume(0.5); // sets microphone volume to 50%
+```
+
+```
+bumblebee.setMicVolume(2); // sets microphone volume to 200%
 ```
 
 ### Spectrum Analyzer
@@ -178,6 +178,10 @@ For the DeepSpeech speech recognition and hotword example, see instructions at:
 This repository is licensed under Apache 2.0.  See [Porcupine](https://github.com/Picovoice/Porcupine) for more details.
 
 ## Change Log
+
+**0.0.6:**
+
+- add the default hotwords back in to simplify the syntax to .addHotword('bumblebee')
 
 **0.0.5:**
 
