@@ -7,11 +7,11 @@ const bumblebee = new BumbleBee();
 
 bumblebee.setWorkersPath('./bumblebee-workers');
 
-bumblebee.addHotword('bumblebee', require('bumblebee-hotword/hotwords/bumblebee'));
-bumblebee.addHotword('grasshopper', require('bumblebee-hotword/hotwords/grasshopper'));
-bumblebee.addHotword('hey_edison', require('bumblebee-hotword/hotwords/hey_edison'));
-bumblebee.addHotword('porcupine', require('bumblebee-hotword/hotwords/porcupine'));
-bumblebee.addHotword('terminator', require('bumblebee-hotword/hotwords/terminator'));
+bumblebee.addHotword('bumblebee');
+bumblebee.addHotword('grasshopper');
+bumblebee.addHotword('hey_edison');
+bumblebee.addHotword('porcupine');
+bumblebee.addHotword('terminator');
 
 bumblebee.setHotword('bumblebee');
 
@@ -51,11 +51,6 @@ class BumbleBeeApp extends Component {
 		bumblebee.on('hotword', (word) => {
 			this.recognizeHotword(word);
 		});
-		
-		// downsampled microphone audio data now available:
-		// bumblebee.on('data', function(data) {
-		// 	console.log('audio data:', data);
-		// });
 	}
 	
 	componentDidMount() {
@@ -65,10 +60,10 @@ class BumbleBeeApp extends Component {
 			console.log('analyser', analyser);
 			var canvas = document.getElementById('oscilloscope');
 			this.analyser = new SpectrumAnalyser(analyser, canvas);
-			// if (this.state.muted) {
-			// 	bumblebee.setMuted(true);
-			// 	this.analyser.setMuted(true);
-			// }
+			if (this.state.muted) {
+				bumblebee.setMuted(true);
+				this.analyser.setMuted(true);
+			}
 			this.analyser.start();
 		});
 	}
@@ -199,6 +194,7 @@ class BumbleBeeApp extends Component {
 			muted
 		}, () => {
 			bumblebee.setMuted(muted);
+			if (this.analyser) this.analyser.setMuted(muted);
 		});
 	}
 	

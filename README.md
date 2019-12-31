@@ -8,15 +8,15 @@ When BumbleBee is added to a web page, it listens to the microphone and calls a 
 
 ## Examples
 
-Basic Example: [https://jaxcore.github.io/bumblebee-hotword/basic-example/](https://jaxcore.github.io/bumblebee-hotword/basic-example/)
+- [Basic Example](https://jaxcore.github.io/bumblebee-hotword/basic-example/) - most simple example possible
+- [Full Example](https://jaxcore.github.io/bumblebee-hotword/full-example/) - all options available, with visualization
 
-Full Example: [https://jaxcore.github.io/bumblebee-hotword/full-example/](https://jaxcore.github.io/bumblebee-hotword/full-example/)
-
-#### DeepSpeech Example:
+#### DeepSpeech Examples:
 
 Bumblebee can be used as a hotword/keyword system for [Mozilla DeepSpeech](https://github.com/dsteinman/DeepSpeech) speech recognition engine.  See the [Jaxcore DeepSpeech Plugin](https://github.com/jaxcore/deepspeech-plugin/) project for more information:
 
-- [https://github.com/jaxcore/deepspeech-plugin/tree/master/examples/web-hotword-example](https://github.com/jaxcore/deepspeech-plugin/tree/master/examples/web-hotword-example)
+- [Web-based client-serer example](https://github.com/jaxcore/deepspeech-plugin/tree/master/examples/web-hotword-example) - uses a ReactJS client streaming to a NodeJS server running DeepSpeech
+- [ElectronJS example](https://github.com/jaxcore/deepspeech-plugin/tree/master/examples/web-hotword-example) - runs DeepSpeech and BumbleBee inside an Electron desktop application
 
 
 ## Install
