@@ -4,7 +4,9 @@
 
 This is a stripped down and repackaged version of the excellent [Porcupine](https://github.com/Picovoice/Porcupine) wake word (hotword) system. This requires no cloud services and is freely available to use under the Apache 2.0 license (GPLv3 compatible).
 
-When BumbleBee is added to a web page, it listens to the microphone and calls a function when it hears the available hotwords.
+When BumbleBee is added to a web page (or ElectronJS), it listens to the microphone and emits an event when it hears the available hotwords.
+
+If you need hotword detection in NodeJS see the [NodeJS version of BumbleBee](https://github.com/jaxcore/bumblebee-hotword-node).
 
 ## Examples
 
