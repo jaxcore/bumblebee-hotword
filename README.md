@@ -37,13 +37,13 @@ import BumbleBee from "bumblebee-hotword";
 
 #### Porcupine Web Assembly Codebase
 
-The porcupine webworker files must be manually served from your public html directory and the directory must be specific using `setWorkersPath()` before starting bumblebee.  See the examples for an example.
+The porcupine webworker files must be manually served from your public html directory and the location must be specified using `setWorkersPath()` before starting bumblebee.
 
 ```
 bumblebee.setWorkersPath('/bumblebee-workers');
 ```
 
-The `bumblebee-workers` directory can be found [here](https://github.com/jaxcore/bumblebee-hotword/tree/master/bumblebee-workers)
+Copy the entire [here](https://github.com/jaxcore/bumblebee-hotword/tree/master/bumblebee-workers) directory to your web server's public html or assets directory.
 
 
 ### Quick Start

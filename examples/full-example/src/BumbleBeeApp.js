@@ -201,7 +201,7 @@ class BumbleBeeApp extends Component {
 		if (hotword === this.state.selectedHotword || !this.state.selectedHotword) {
 			
 			if (this.state.action === 'sounds') {
-				this.sounds[hotword].play();
+				if (this.sounds[hotword]) this.sounds[hotword].play();
 			}
 			else if (this.state.action === 'texttospeech') {
 				voice.say(hotword + 'detected');
