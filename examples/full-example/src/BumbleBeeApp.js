@@ -155,6 +155,7 @@ class BumbleBeeApp extends Component {
 	}
 	
 	changeHotword(e) {
+		// todo: move to server
 		let selectedHotword = e.target.options[e.target.selectedIndex].value;
 		bumblebee.setHotword(selectedHotword);
 		this.setState({
