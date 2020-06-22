@@ -1,6 +1,6 @@
 # BumbleBee Hotword
 
-![screenshot](https://raw.githubusercontent.com/jaxcore/bumblebee-hotword/master/logo.png)
+![screenshot](logo.png)
 
 This is a stripped down and repackaged version of the excellent [Porcupine](https://github.com/Picovoice/Porcupine) wake word (hotword) system. This requires no cloud services and is freely available to use under the Apache 2.0 license (GPLv3 compatible).
 
