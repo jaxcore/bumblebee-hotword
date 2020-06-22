@@ -181,6 +181,10 @@ This repository is licensed under Apache 2.0.  See [Porcupine](https://github.co
 
 ## Change Log
 
+**0.0.7:**
+
+- upgrade to Porcupine v1.8, the 'data' event now contains float data and the hotword
+
 **0.0.6:**
 
 - add the default hotwords back in to simplify the syntax to .addHotword('bumblebee')

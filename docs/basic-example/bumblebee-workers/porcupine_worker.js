@@ -7,7 +7,7 @@ onmessage = function (e) {
             init(e.data.keywordIDs, e.data.sensitivities);
             break;
         case "process":
-            process(e.data.inputFrame);
+            process(e.data.inputFrame, e.data.inputFrameFloat);
             break;
         case "release":
             release();
@@ -31,12 +31,17 @@ function init(keywordIDs, _sensitivities_) {
     }
 }
 
-function process(inputFrame) {
+function process(inputFrame, inputFrameFloat) {
+    // debugger;
     if (porcupine == null && Porcupine.isLoaded()) {
         porcupine = Porcupine.create(keywordIDArray, sensitivities);
     } else if (porcupine != null) {
-        let keywordIndex = porcupine.process(inputFrame);
-        postMessage({keyword: keywordIndex === -1 ? null : keywords[keywordIndex]});
+        let keywordIndex = porcupine.process(inputFrame, inputFrameFloat);
+        postMessage({
+            keyword: keywordIndex === -1 ? null : keywords[keywordIndex],
+            inputFrame,
+            inputFrameFloat
+        });
     }
 }
 

@@ -50,6 +50,13 @@ class BumbleBeeApp extends Component {
 		bumblebee.on('hotword', (word) => {
 			this.recognizeHotword(word);
 		});
+		
+		bumblebee.on('data', (intData, floatData, sampleRate, hotword) => {
+			if (hotword) {
+				console.log('data', intData, floatData, sampleRate, hotword);
+				debugger;
+			}
+		});
 	}
 	
 	componentDidMount() {
