@@ -1,25 +1,23 @@
-# BumbleBee Hotword
-
 ![screenshot](logo.png)
 
-This is a stripped down and repackaged version of the excellent [Porcupine](https://github.com/Picovoice/Porcupine) wake word (hotword) system. This requires no cloud services and is freely available to use under the Apache 2.0 license (GPLv3 compatible).
+# Bumblebee Hotword
 
-When BumbleBee is added to a web page (or ElectronJS), it listens to the microphone and emits an event when it hears the available hotwords.
+Bumblebee Hotword is a stripped down and repackaged version of the excellent [Porcupine](https://github.com/Picovoice/Porcupine) wake word (hotword) system. This requires no cloud services and is freely available to use under the Apache 2.0 license (GPLv3 compatible).
 
-If you need hotword detection in NodeJS see the [NodeJS version of BumbleBee](https://github.com/jaxcore/bumblebee-hotword-node).
+When Bumblebee Hotword is added to a web page, it listens to the microphone and emits an event when it hears any of the available hotwords.
+
+For more information about the Bumblebee platform and its other features visit:
+
+- [https://github.com/jaxcore/bumblebee](https://github.com/jaxcore/bumblebee)
+
+## NodeJS Version
+
+If you need hotword detection in NodeJS use [bumblebee-hotword-node](https://github.com/jaxcore/bumblebee-hotword-node).
 
 ## Examples
 
 - [Basic Example](https://jaxcore.github.io/bumblebee-hotword/basic-example/) - most simple example possible
 - [Full Example](https://jaxcore.github.io/bumblebee-hotword/full-example/) - all options available, with visualization
-
-#### DeepSpeech Examples:
-
-Bumblebee can be used as a hotword/keyword system for [Mozilla DeepSpeech](https://github.com/dsteinman/DeepSpeech) speech recognition engine.  See the [Jaxcore DeepSpeech Plugin](https://github.com/jaxcore/deepspeech-plugin/) project for more information:
-
-- [Web-based client-serer example](https://github.com/jaxcore/deepspeech-plugin/tree/master/examples/web-hotword-example) - uses a ReactJS client streaming to a NodeJS server running DeepSpeech
-- [ElectronJS example](https://github.com/jaxcore/deepspeech-plugin/tree/master/examples/electron-example) - runs DeepSpeech and BumbleBee inside an Electron desktop application
-
 
 ## Install
 
@@ -32,7 +30,7 @@ npm install bumblebee-hotword
 And include in your web project:
 
 ```
-import BumbleBee from "bumblebee-hotword";
+import Bumblebee from "bumblebee-hotword";
 ```
 
 #### Porcupine Web Assembly Codebase
@@ -43,15 +41,15 @@ The porcupine webworker files must be manually served from your public html dire
 bumblebee.setWorkersPath('/bumblebee-workers');
 ```
 
-Copy the entire [here](https://github.com/jaxcore/bumblebee-hotword/tree/master/bumblebee-workers) directory to your web server's public html or assets directory.
+Copy the entire directory [here](https://github.com/jaxcore/bumblebee-hotword/tree/master/bumblebee-workers) to your web server's public html or assets directory.
 
 
 ### Quick Start
 
 ```
-const BumbleBee = require('bumblebee-hotword');
+const Bumblebee = require('bumblebee-hotword');
 
-let bumblebee = new BumbleBee();
+let bumblebee = new Bumblebee();
 
 // set path to worker files
 bumblebee.setWorkersPath('/bumblebee-workers');
@@ -106,7 +104,7 @@ Hotword detection sensitivity (0.0 to 1.0) is configurable only before the first
 bumblebee.setSensitivity(0.8);
 ```
 
-### Disable BumbleBee
+### Disable Bumblebee
 
 Use the stop() method to disable the microphone and all processing:
 
@@ -132,7 +130,7 @@ bumblebee.setMicVolume(2); // sets microphone volume to 200%
 
 ### Spectrum Analyzer
 
-Bumblebee instantiates an [audio analyser](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser) which can be used to draw an oscilloscope or other types of processing:
+Bumblebee Hotword instantiates an [audio analyser](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createAnalyser) which can be used to draw an oscilloscope or other types of processing:
 
 ```
 bumblebee.on('analyser', function(analyser) {
@@ -142,7 +140,7 @@ bumblebee.on('analyser', function(analyser) {
 
 ### Audio Data
 
-Bumblebee emits a stream of "data" events which can be used to receive the microphone audio data after downsampling to 16bit/16khz PCM.  This is the format also used by other speech processing systems such as DeepSpeech.
+Bumblebee Hotword emits a stream of "data" events which can be used to receive the microphone audio data after downsampling to 16bit/16khz PCM.  This is the format also used by other speech processing systems such as DeepSpeech.
 
 ```
 bumblebee.on('data', function(data) {
@@ -171,15 +169,15 @@ yarn install
 yarn run
 ```
 
-For the DeepSpeech speech recognition and hotword example, see instructions at:
-
-- [https://github.com/jaxcore/deepspeech-plugin](https://github.com/jaxcore/deepspeech-plugin)
-
 ## License
 
 This repository is licensed under Apache 2.0.  See [Porcupine](https://github.com/Picovoice/Porcupine) for more details.
 
 ## Change Log
+
+**0.0.8:**
+
+- add bufferSize option
 
 **0.0.7:**
 
