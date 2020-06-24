@@ -158,7 +158,7 @@ For the [basic](https://jaxcore.github.io/bumblebee-hotword/basic-example/) exam
 ```
 cd examples/basic-example
 yarn install
-yarn run
+yarn start
 ```
 
 For the [full](https://jaxcore.github.io/bumblebee-hotword/full-example/) example:
@@ -166,7 +166,7 @@ For the [full](https://jaxcore.github.io/bumblebee-hotword/full-example/) exampl
 ```
 cd examples/full-example
 yarn install
-yarn run
+yarn start
 ```
 
 ## License
