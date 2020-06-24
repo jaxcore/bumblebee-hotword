@@ -1,11 +1,11 @@
 {
   "name": "bumblebee-basic-example",
-  "version": "0.0.6",
+  "version": "0.0.0",
   "dependencies": {
-    "bumblebee-hotword": "0.0.6",
+    "bumblebee-hotword": "file:../../",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0"
+    "react-scripts": "^3.4.1"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -12,6 +12,8 @@ bumblebee.addHotword('grasshopper');
 bumblebee.addHotword('hey_edison');
 bumblebee.addHotword('porcupine');
 bumblebee.addHotword('terminator');
+bumblebee.addHotword('blueberry');
+bumblebee.addHotword('white_smoke');
 
 bumblebee.setHotword('bumblebee');
 
@@ -44,7 +46,9 @@ class BumbleBeeApp extends Component {
 			hey_edison: new Audio('sounds/hey_edison.mp3'),
 			grasshopper: new Audio('sounds/grasshopper.mp3'),
 			porcupine: new Audio('sounds/porcupine.mp3'),
-			terminator: new Audio('sounds/terminator.mp3')
+			terminator: new Audio('sounds/terminator.mp3'),
+			blueberry: new Audio('sounds/blueberry.mp3'),
+			white_smoke: new Audio('sounds/white_smoke.mp3')
 		};
 		
 		bumblebee.on('hotword', (word) => {
