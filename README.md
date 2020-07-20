@@ -175,6 +175,10 @@ This repository is licensed under Apache 2.0.  See [Porcupine](https://github.co
 
 ## Change Log
 
+**0.1.0:**
+
+- add microphone selection
+
 **0.0.9:**
 
 - added blueberry, and white_smoke to the default hotwords, removed debug console.log's

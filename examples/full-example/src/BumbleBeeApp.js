@@ -38,7 +38,9 @@ class BumbleBeeApp extends Component {
 			sensivitiyChanged: false,
 			sensitivity: 0.5,
 			action: 'sounds',
-			muted: false
+			muted: false,
+			microphones: [],
+			microphone: 'default'
 		};
 		
 		this.sounds = {
@@ -76,11 +78,22 @@ class BumbleBeeApp extends Component {
 			}
 			this.analyser.start();
 		});
+		
+		bumblebee.getMicrophones().then(mics => {
+			this.setState({
+				microphones: mics
+			})
+		}).catch(console);
 	}
 	
 	render() {
 		return (
 			<div className="App">
+				Microphone: <select value={this.state.microphone} onChange={e => this.changeMicrophone(e)}>
+					{ this.renderMicrophones() }
+				</select>
+				
+				<br/>
 				
 				Hotword: <select value={this.state.selectedHotword||''} onChange={e => this.changeHotword(e)}>
 					{ this.renderHotwordOptions() }
@@ -126,6 +139,13 @@ class BumbleBeeApp extends Component {
 		else return (<h4>Say any of the following: {this.state.hotwords.join(', ')}:</h4>);
 	}
 	
+	renderMicrophones() {
+		let h = this.state.microphones.map((mic,i) => {
+			return (<option key={i} value={mic.id}>{mic.name}</option>);
+		});
+		return h;
+	}
+	
 	renderHotwordOptions() {
 		let h = this.state.hotwords.map((hotword,i) => {
 			return (<option key={i} value={hotword}>{hotword}</option>);
@@ -165,6 +185,17 @@ class BumbleBeeApp extends Component {
 		}
 	}
 	
+	changeMicrophone(e) {
+		let microphone = e.target.options[e.target.selectedIndex].value;
+		this.stop();
+		this.setState({
+			microphone
+		}, () => {
+			bumblebee.setMicrophone(microphone);
+			this.start();
+		});
+	}
+	
 	changeHotword(e) {
 		// todo: move to server
 		let selectedHotword = e.target.options[e.target.selectedIndex].value;
@@ -176,27 +207,32 @@ class BumbleBeeApp extends Component {
 	}
 	
 	toggleHotword() {
-		let hotword = this.state.selectedHotword;
 		if (!this.state.bumblebee_started) {
-			console.log('starting', hotword);
-			
-			this.setState({
-				bumblebee_started: true,
-				spokenHotwords: [],
-				sensivitiyChanged: true
-			});
-			
-			bumblebee.start();
-			
+			this.start();
 		}
 		else {
-			bumblebee.stop();
-			
-			this.setState({
-				bumblebee_started: false,
-				spokenHotwords: []
-			});
+			this.stop();
 		}
+	}
+	
+	start() {
+		let hotword = this.state.selectedHotword;
+		console.log('starting', hotword);
+		
+		this.setState({
+			bumblebee_started: true,
+			spokenHotwords: [],
+			sensivitiyChanged: true
+		});
+		
+		bumblebee.start();
+	}
+	stop() {
+		bumblebee.stop();
+		this.setState({
+			bumblebee_started: false,
+			spokenHotwords: []
+		});
 	}
 	
 	toggleMuted() {
