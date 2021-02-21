@@ -74,9 +74,14 @@ Note: browsers require user-interaction to start the microphone.
 
 The hotwords available by default are:
 
+* alexa
 * bumblebee
+* computer
 * grasshopper
 * hey edison
+* hey google
+* hey siri
+* jarvis
 * porcupine
 * terminator
 
@@ -174,6 +179,11 @@ yarn start
 This repository is licensed under Apache 2.0.  See [Porcupine](https://github.com/Picovoice/Porcupine) for more details.
 
 ## Change Log
+
+**0.2.0:**
+
+- upgrade to Porcupine v1.9
+- added new Porcupine hotwords: computer, alexa, hey google, hey siri, jarvis
 
 **0.1.0:**
 

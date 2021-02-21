@@ -1,113 +1,192 @@
+/*
+    Copyright 2018-2020 Picovoice Inc.
+
+    You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
+    file accompanying this source.
+
+    Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations under the License.
+*/
+
 let Porcupine = (function () {
+  /**
+   * Binding for wake word engine (Porcupine). It initializes the JavaScript binding for WebAssembly module and
+   * exposes a factory method for creating new instances of the engine.
+   *
+   * When the WebAssembly module has finished loading, if a callback function was provided via the PorcupineOptions object,
+   * it will be invoked. Otherwise, use `.isLoaded()` to determine if Porcupine is ready.
+   */
+
+  let callback = null;
+  let frameLength = null;
+  let initWasm = null;
+  let processWasm = null;
+  let releaseWasm = null;
+  let sampleRate = null;
+  let version = null;
+
+  if (typeof PorcupineOptions !== "undefined") {
+    if (
+      PorcupineOptions !== null &&
+      typeof PorcupineOptions.callback !== "undefined"
+    ) {
+      callback = PorcupineOptions.callback;
+    }
+  }
+
+  let porcupineModule = PorcupineModule();
+  porcupineModule.then(function (Module) {
+    initWasm = Module.cwrap("pv_porcupine_wasm_init", "number", [
+      "number",
+      "number",
+      "number",
+      "number",
+    ]);
+    releaseWasm = Module.cwrap("pv_porcupine_wasm_delete", ["number"]);
+    processWasm = Module.cwrap("pv_porcupine_wasm_process", "number", [
+      "number",
+      "number",
+    ]);
+    sampleRate = Module.cwrap("pv_wasm_sample_rate", "number", [])();
+    frameLength = Module.cwrap(
+      "pv_porcupine_wasm_frame_length",
+      "number",
+      []
+    )();
+    version = Module.cwrap("pv_porcupine_wasm_version", "string", [])();
+
+    if (callback !== undefined && callback !== null) {
+      callback();
+    }
+  });
+
+  let isLoaded = function () {
     /**
-     * Binding for wake word detection object. It initializes the JS binding for WebAssembly module and exposes
-     * a factory method for creating new instances of wake word engine.
+     * Flag indicating if 'PorcupineModule' is loaded. '.create()' can only be called after loading is finished.
      */
 
-    let initWasm = null;
-    let releaseWasm = null;
-    let processWasm = null;
-    let sampleRate = null;
-    let frameLength = null;
-    let version = null;
+    return initWasm !== null;
+  };
 
-    let porcupineModule = PorcupineModule();
-    porcupineModule.then(function(Module) {
-        initWasm = Module.cwrap('pv_porcupine_wasm_init', 'number', ['number', 'number', 'number', 'number']);
-        releaseWasm = Module.cwrap('pv_porcupine_wasm_delete', ['number']);
-        processWasm = Module.cwrap('pv_porcupine_wasm_process', 'number', ['number', 'number']);
-        sampleRate = Module.cwrap('pv_wasm_sample_rate', 'number', [])();
-        frameLength = Module.cwrap('pv_porcupine_wasm_frame_length', 'number', [])();
-        version = Module.cwrap('pv_porcupine_wasm_version', 'string', [])();
-    });
+  let create = function (keywordModels, sensitivities) {
+    /**
+     * Creates an instance of wake word engine (Porcupine). Can be called only after '.isLoaded()' returns true.
+     * @param {Array} Array of keyword models. A keyword model is the signature for a given phrase to be detected.
+     * Each keyword model should be stored as 'UInt8Array'.
+     * @param {Float32Array} Detection sensitivities for each keywords model. A higher sensitivity reduces miss rate
+     * at the cost of potentially higher false alarm rate. Sensitivity should be a floating-point number within
+     * [0, 1].
+     * @returns An instance of the engine.
+     */
 
-    let isLoaded = function() {
-        /**
-         * Flag indicating if 'PorcupineModule' is loaded. .create() can only be called after loading is finished.
-         */
-        return initWasm != null;
+    if (keywordModels.length !== sensitivities.length) {
+      throw new Error(`Got ${keywordModels.length} keyword models and ${sensitivities.length} sensitivity values. These numbers should be equal.`)
+    }
+
+    if (sensitivities.constructor !== Float32Array) {
+      throw new Error("Sensitivities should be passed as a Float32Array.");
+    }
+
+    let keywordModelSizes = Int32Array.from(
+      keywordModels.map((x) => x.byteLength)
+    );
+    let keywordModelSizesPointer = porcupineModule._malloc(
+      keywordModelSizes.byteLength
+    );
+    let keywordModelSizesBuffer = new Uint8Array(
+      porcupineModule.HEAPU8.buffer,
+      keywordModelSizesPointer,
+      keywordModelSizes.byteLength
+    );
+    keywordModelSizesBuffer.set(new Uint8Array(keywordModelSizes.buffer));
+
+    let keywordModelPointers = Uint32Array.from(
+      keywordModels.map((keywordModel) => {
+        let heapPointer = porcupineModule._malloc(keywordModel.byteLength);
+        let heapBuffer = new Uint8Array(
+          porcupineModule.HEAPU8.buffer,
+          heapPointer,
+          keywordModel.byteLength
+        );
+        heapBuffer.set(keywordModel);
+        return heapPointer;
+      })
+    );
+
+    let keywordModelPointersPointer = porcupineModule._malloc(
+      keywordModelPointers.byteLength
+    );
+    let keywordModelPointersBuffer = new Uint8Array(
+      porcupineModule.HEAPU8.buffer,
+      keywordModelPointersPointer,
+      keywordModelPointers.byteLength
+    );
+    keywordModelPointersBuffer.set(new Uint8Array(keywordModelPointers.buffer));
+
+    let sensitivitiesPointer = porcupineModule._malloc(
+      sensitivities.byteLength
+    );
+    let sensitivitiesBuffer = new Uint8Array(
+      porcupineModule.HEAPU8.buffer,
+      sensitivitiesPointer,
+      sensitivities.byteLength
+    );
+    sensitivitiesBuffer.set(new Uint8Array(sensitivities.buffer));
+
+    let handleWasm = initWasm(
+      keywordModels.length,
+      keywordModelSizesPointer,
+      keywordModelPointersPointer,
+      sensitivitiesPointer
+    );
+    if (handleWasm === 0) {
+      throw new Error("failed to initialize Porcupine.");
+    }
+
+    let pcmWasmPointer = porcupineModule._malloc(2 * frameLength);
+
+    let release = function () {
+      /**
+       * Releases resources acquired by WebAssembly module.
+       */
+
+      releaseWasm(handleWasm);
+      porcupineModule._free(pcmWasmPointer);
     };
 
-    let create = function (keywordIDs, sensitivities) {
-        /**
-         * Creates an instance of wake word detection engine (aka porcupine). Can be called only after .isLoaded()
-         * returns true.
-         * @param {Array} Array of keyword IDs. A keyword ID is the signature for a given phrase to be detected. Each
-         * keyword ID should be stored as UInt8Array.
-         * @param {Float32Array} Detection sensitivity. A higher sensitivity reduces miss rate at the cost of higher
-         * false alarm rate. Sensitivity is a number within [0, 1].
-         * @returns An instance of wake word detection engine.
-         */
-        let keywordIDSizes = Int32Array.from(keywordIDs.map(keywordID => keywordID.byteLength));
-        let keywordIDSizesPointer = porcupineModule._malloc(keywordIDSizes.byteLength);
-        let keywordIDSizesBuffer = new Uint8Array(porcupineModule.HEAPU8.buffer, keywordIDSizesPointer, keywordIDSizes.byteLength);
-        keywordIDSizesBuffer.set(new Uint8Array(keywordIDSizes.buffer));
+    let process = function (pcmInt16Array) {
+      /**
+       * Processes a frame of audio. The required sample rate can be retrieved from '.sampleRate' and the length
+       * of frame (number of audio samples per frame) can be retrieved from '.frameLength'. The audio needs to be
+       * 16-bit linearly-encoded. Furthermore, the engine operates on single-channel audio.
+       * @param {Int16Array} A frame of audio with properties described above.
+       * @returns {Number} Index of detected keyword (phrase). When no keyword is detected it returns -1.
+       */
 
-        let keywordIDPointers = Uint32Array.from(keywordIDs.map(keywordID => {
-            let heapPointer = porcupineModule._malloc(keywordID.byteLength);
-            let heapBuffer = new Uint8Array(porcupineModule.HEAPU8.buffer, heapPointer, keywordID.byteLength);
-            heapBuffer.set(keywordID);
-            return heapPointer;
-        }));
+      let pcmWasmBuffer = new Uint8Array(
+        porcupineModule.HEAPU8.buffer,
+        pcmWasmPointer,
+        pcmInt16Array.byteLength
+      );
+      pcmWasmBuffer.set(new Uint8Array(pcmInt16Array.buffer));
 
-        let keywordIDPointersPointer = porcupineModule._malloc(keywordIDPointers.byteLength);
-        let keywordIDPointersBuffer = new Uint8Array(
-            porcupineModule.HEAPU8.buffer,
-            keywordIDPointersPointer,
-            keywordIDPointers.byteLength);
-        keywordIDPointersBuffer.set(new Uint8Array(keywordIDPointers.buffer));
+      let keyword_index = processWasm(handleWasm, pcmWasmPointer);
+      if (keyword_index === -2) {
+        throw new Error("Porcupine failed to process audio");
+      }
 
-        let sensitivitiesPointer = porcupineModule._malloc(sensitivities.byteLength);
-        let sensitivitiesBuffer = new Uint8Array(porcupineModule.HEAPU8.buffer, sensitivitiesPointer, sensitivities.byteLength);
-        sensitivitiesBuffer.set(new Uint8Array(sensitivities.buffer));
-
-        let handleWasm = initWasm(
-            keywordIDs.length,
-            keywordIDSizesPointer,
-            keywordIDPointersPointer,
-            sensitivitiesPointer);
-        if (handleWasm === 0) {
-            throw new Error("failed to initialize porcupine.");
-        }
-
-        let pcmWasmPointer = porcupineModule._malloc(frameLength * 2);
-
-        let release = function () {
-            /**
-             * Releases resources acquired by WebAssembly module.
-             */
-
-            releaseWasm(handleWasm);
-            porcupineModule._free(pcmWasmPointer);
-        };
-
-        let process = function (pcmInt16Array) {
-            /**
-             * Processes a frame of audio. The required sample rate can be retrieved from .sampleRate and the length of
-             * frame (number of samples within frame) can be retrieved from .frameLength.
-             * @param {Int16Array} A frame of audio with properties described above.
-             * @returns {Number} Index of detected keyword (phrase). When no keyword is detected it returns -1.
-             */
-
-            let pcmWasmBuffer = new Uint8Array(porcupineModule.HEAPU8.buffer, pcmWasmPointer, pcmInt16Array.byteLength);
-            pcmWasmBuffer.set(new Uint8Array(pcmInt16Array.buffer));
-
-            let keyword_index = processWasm(handleWasm, pcmWasmPointer);
-            if (keyword_index === -2) {
-                throw new Error("porcupine failed to process audio");
-            }
-
-            return keyword_index;
-        };
-
-        return {
-            release: release,
-            process: process,
-            sampleRate: sampleRate,
-            frameLength: frameLength,
-            version: version
-        }
+      return keyword_index;
     };
 
-    return {isLoaded: isLoaded, create: create}
+    return {
+      release: release,
+      process: process,
+      sampleRate: sampleRate,
+      frameLength: frameLength,
+      version: version,
+    };
+  };
+
+  return { isLoaded: isLoaded, create: create };
 })();

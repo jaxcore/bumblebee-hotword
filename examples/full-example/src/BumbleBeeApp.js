@@ -7,15 +7,18 @@ const bumblebee = new BumbleBee();
 
 bumblebee.setWorkersPath('./bumblebee-workers');
 
+bumblebee.addHotword('alexa');
 bumblebee.addHotword('bumblebee');
+bumblebee.addHotword('computer');
 bumblebee.addHotword('grasshopper');
 bumblebee.addHotword('hey_edison');
+bumblebee.addHotword('hey_google');
+bumblebee.addHotword('hey_siri');
+bumblebee.addHotword('jarvis');
 bumblebee.addHotword('porcupine');
 bumblebee.addHotword('terminator');
-bumblebee.addHotword('blueberry');
-bumblebee.addHotword('white_smoke');
 
-bumblebee.setHotword('bumblebee');
+// bumblebee.setHotword('bumblebee');
 
 Say.setWorkers({
 	'espeak': 'webworkers/espeak-en-worker.js'
@@ -44,13 +47,16 @@ class BumbleBeeApp extends Component {
 		};
 		
 		this.sounds = {
+			alexa: new Audio('sounds/alexa.mp3'),
 			bumblebee: new Audio('sounds/bumblebee-on.mp3'),
-			hey_edison: new Audio('sounds/hey_edison.mp3'),
+			computer: new Audio('sounds/computer.mp3'),
 			grasshopper: new Audio('sounds/grasshopper.mp3'),
+			hey_edison: new Audio('sounds/hey_edison.mp3'),
+			hey_google: new Audio('sounds/hey_google.mp3'),
+			hey_siri: new Audio('sounds/hey_siri.mp3'),
+			jarvis: new Audio('sounds/jarvis.mp3'),
 			porcupine: new Audio('sounds/porcupine.mp3'),
-			terminator: new Audio('sounds/terminator.mp3'),
-			blueberry: new Audio('sounds/blueberry.mp3'),
-			white_smoke: new Audio('sounds/white_smoke.mp3')
+			terminator: new Audio('sounds/terminator.mp3')
 		};
 		
 		bumblebee.on('hotword', (word) => {
@@ -60,7 +66,6 @@ class BumbleBeeApp extends Component {
 		bumblebee.on('data', (intData, floatData, sampleRate, hotword) => {
 			if (hotword) {
 				console.log('data', intData, floatData, sampleRate, hotword);
-				debugger;
 			}
 		});
 	}

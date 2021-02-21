@@ -60,15 +60,15 @@ var PorcupineModule = (function () {
 					thisProgram = process["argv"][1].replace(/\\/g, "/")
 				}
 				arguments_ = process["argv"].slice(2);
-				// process["on"]("uncaughtException", function (ex) {
-				// 	if (!(ex instanceof ExitStatus)) {
-				// 		throw ex
-				// 	}
-				// });
-				// process["on"]("unhandledRejection", abort);
-				// quit_ = function (status) {
-				// 	process["exit"](status)
-				// };
+				process["on"]("uncaughtException", function (ex) {
+					if (!(ex instanceof ExitStatus)) {
+						throw ex
+					}
+				});
+				process["on"]("unhandledRejection", abort);
+				quit_ = function (status) {
+					process["exit"](status)
+				};
 				Module["inspect"] = function () {
 					return "[Emscripten Module object]"
 				}
@@ -157,8 +157,6 @@ var PorcupineModule = (function () {
 				}
 			}
 			else {
-				console.log('ENVIRONMENT_IS ???');
-				process.exit();
 			}
 			var out = Module["print"] || console.log.bind(console);
 			var err = Module["printErr"] || console.warn.bind(console);
@@ -360,8 +358,8 @@ var PorcupineModule = (function () {
 				Module["HEAPF64"] = HEAPF64 = new Float64Array(buf)
 			}
 			
-			var DYNAMIC_BASE = 6238272, DYNAMICTOP_PTR = 995232;
-			var INITIAL_TOTAL_MEMORY = Module["TOTAL_MEMORY"] || 134217728;
+			var DYNAMIC_BASE = 6238656, DYNAMICTOP_PTR = 995616;
+			var INITIAL_TOTAL_MEMORY = Module["TOTAL_MEMORY"] || 268435456;
 			if (Module["wasmMemory"]) {
 				wasmMemory = Module["wasmMemory"]
 			}
@@ -485,9 +483,6 @@ var PorcupineModule = (function () {
 				ABORT = true;
 				EXITSTATUS = 1;
 				what = "abort(" + what + "). Build with -s ASSERTIONS=1 for more info.";
-				
-				console.error('Porcupine WASM File error', what);
-				
 				throw new WebAssembly.RuntimeError(what)
 			}
 			
@@ -514,10 +509,7 @@ var PorcupineModule = (function () {
 						throw"both async and sync fetching of the wasm failed"
 					}
 				} catch (err) {
-					console.log('pv_porcupine getBinary error');
-					console.error(err);
-					process.exit();
-					// abort(err)
+					abort(err)
 				}
 			}
 			
@@ -533,7 +525,7 @@ var PorcupineModule = (function () {
 					})
 				}
 				return new Promise(function (resolve, reject) {
-					resolve(getBinary());
+					resolve(getBinary())
 				})
 			}
 			
@@ -850,4 +842,4 @@ else if (typeof define === 'function' && define['amd'])
 	});
 else if (typeof exports === 'object')
 	exports["PorcupineModule"] = PorcupineModule;
- 
+    
