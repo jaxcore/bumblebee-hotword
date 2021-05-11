@@ -199,6 +199,10 @@ This repository is licensed under Apache 2.0.  See [Porcupine](https://github.co
 
 ## Change Log
 
+**0.2.1:**
+
+- add "ok google" hotword
+
 **0.2.0:**
 
 - upgrade to Porcupine v1.9
@@ -207,30 +211,3 @@ This repository is licensed under Apache 2.0.  See [Porcupine](https://github.co
 **0.1.0:**
 
 - add microphone selection
-
-**0.0.9:**
-
-- added blueberry, and white_smoke to the default hotwords, removed debug console.log's
-
-**0.0.8:**
-
-- add bufferSize option
-
-**0.0.7:**
-
-- upgrade to Porcupine v1.8, the 'data' event now contains float data and the hotword
-
-**0.0.6:**
-
-- add the default hotwords back in to simplify the syntax to .addHotword('bumblebee')
-
-**0.0.5:**
-
-- fixed start/stop related bugs
-- added separate setLineColor() setBackgroundColor() methods
-
-**0.0.4:**
-
-- added spectrum analyser
-- setMuted() and setMicVolume() methods
-- DeepSpeech example
