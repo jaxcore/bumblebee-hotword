@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import Say from 'jaxcore-say';
-
 import BumbleBee, {SpectrumAnalyser} from 'bumblebee-hotword';
+
+// import custom hotword data file:
+import blueberryData from './blueberry'
 
 const bumblebee = new BumbleBee();
 
@@ -15,9 +17,14 @@ bumblebee.addHotword('hey_edison');
 bumblebee.addHotword('hey_google');
 bumblebee.addHotword('hey_siri');
 bumblebee.addHotword('jarvis');
+bumblebee.addHotword('ok_google');
 bumblebee.addHotword('porcupine');
 bumblebee.addHotword('terminator');
 
+// add custom hotword data to bumblebee:
+bumblebee.addHotword('blueberry', blueberryData, 0.5);
+
+// temporarily set only on of the hotwords active:
 // bumblebee.setHotword('bumblebee');
 
 Say.setWorkers({
@@ -55,8 +62,11 @@ class BumbleBeeApp extends Component {
 			hey_google: new Audio('sounds/hey_google.mp3'),
 			hey_siri: new Audio('sounds/hey_siri.mp3'),
 			jarvis: new Audio('sounds/jarvis.mp3'),
+			ok_google: new Audio('sounds/hey_google.mp3'),
 			porcupine: new Audio('sounds/porcupine.mp3'),
-			terminator: new Audio('sounds/terminator.mp3')
+			terminator: new Audio('sounds/terminator.mp3'),
+			
+			blueberry: new Audio('sounds/computer.mp3'),
 		};
 		
 		bumblebee.on('hotword', (word) => {
@@ -64,9 +74,8 @@ class BumbleBeeApp extends Component {
 		});
 		
 		bumblebee.on('data', (intData, floatData, sampleRate, hotword) => {
-			if (hotword) {
-				console.log('data', intData, floatData, sampleRate, hotword);
-			}
+			// receive the microphone audio data here either in signed 8 bit integer, or float32 array
+			// if hotword is a string then porcupine has identified a hotword
 		});
 	}
 	

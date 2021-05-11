@@ -82,6 +82,7 @@ The hotwords available by default are:
 * hey google
 * hey siri
 * jarvis
+* ok google
 * porcupine
 * terminator
 
@@ -100,6 +101,24 @@ bumblebee.on('hotword', function(hotword) {
 ```
 
 The [Picovoice hotwords open source hotwords](https://github.com/Picovoice/Porcupine/tree/master/resources/keyword_files) are freely usable under the Apache 2.0 license.  Custom hotwords can be licensed from [https://picovoice.ai](https://picovoice.ai/).
+
+### Adding a Custom Hotword
+
+Like the open source hotwords, the file must be in Porcupine's "_wasm.ppn" format.
+
+You can use the [tools/convert_ppn.sh](tools/convert_ppn.sh) shell script (uses the xdd command line program) to convert the PPN file to a JavaScript file:
+
+```
+sh tools/convert_ppn.sh my_custom_hotword_wasm.ppn
+```
+
+The resulting .js file can then be added to Bumblebee:
+
+```
+import my_custom_hotword from './my_custom_hotword'
+bumblebee.addHotword('my_custom_hotword', my_custom_hotword, 0.5)
+```
+
 
 ### Sensitivity
 

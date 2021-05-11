@@ -1,1 +1,0 @@
-{"version":3,"sources":["index.css"],"names":[],"mappings":"AAAA,KAEI,iBACJ,CACA,mBAHI,cAKJ","file":"main.dbd2b449.chunk.css","sourcesContent":["body {\n    font-size: 20px;\n    line-height: 1.5em;\n}\nselect, button {\n    font-size: 20px;\n}\n"]}
